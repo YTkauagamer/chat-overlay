@@ -41,3 +41,16 @@ function getTags(raw) {
     broadcaster: tags.includes("broadcaster/1")
   };
 }
+const client = new tmi.Client({
+  channels: ['youtubekaua']
+});
+
+client.connect();
+
+client.on('message', (channel, tags, message, self) => {
+  if (self) return;
+
+  if ((tags.mod || tags.badges?.broadcaster) && commands[message]) {
+    showMedia(commands[message]);
+  }
+});
