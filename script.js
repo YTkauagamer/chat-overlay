@@ -1,7 +1,7 @@
 const overlay = document.getElementById("overlay");
 
 // 👉 MODO OFFLINE (true = ligado | false = desligado)
-const OFFLINE_MODE = true;
+const OFFLINE_MODE = false;
 
 function showMedia(url) {
   const img = document.createElement("img");
