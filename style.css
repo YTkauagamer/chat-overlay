@@ -1,0 +1,19 @@
+body {
+  margin: 0;
+  background: transparent;
+  overflow: hidden;
+}
+
+#overlay img {
+  position: absolute;
+  bottom: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 300px;
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
