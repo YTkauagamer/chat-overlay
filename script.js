@@ -1,71 +1,43 @@
-const chat = document.getElementById("chat");
-const gifArea = document.getElementById("gif-area");
+const overlay = document.getElementById("overlay");
 
-// 🔧 CONFIGURAÇÃO
-const CHANNEL = "youtubekaua"; // seu canal da Twitch
+const socket = new WebSocket("wss://irc-ws.chat.twitch.tv:443");
+const channel = "youtubekaua";
+socket.onopen = () => {
+  socket.send("PASS SCHMOOPIIE");
+  socket.send("NICK justinfan12345");
+  socket.send(`JOIN #${channel}`);
+};
 
-const client = new tmi.Client({
-  channels: [CHANNEL]
-});
+socket.onmessage = (event) => {
+  const message = event.data;
 
-client.connect();
+  if (message.includes("PRIVMSG")) {
+    const tags = getTags(message);
+    const chatMessage = message.split("PRIVMSG")[1].split(":")[1].trim();
 
-client.on("message", (channel, tags, message, self) => {
-  if (self) return;
-
-  const user = tags["display-name"];
-  const isMod = tags.mod || tags.badges?.broadcaster;
-
-  addMessage(user, message);
-
-  // 👉 COMANDOS SÓ PRA MODS E STREAMER
-  if (isMod) {
-    checkCommands(message);
+    if (tags.mod || tags.broadcaster) {
+      if (commands[chatMessage]) {
+        showMedia(commands[chatMessage]);
+      }
+    }
   }
-});
+};
 
-function addMessage(user, text) {
-  const msg = document.createElement("div");
-  msg.className = "message";
-  msg.innerHTML = `<strong>${user}:</strong> ${text}`;
-  chat.appendChild(msg);
-
-  if (chat.children.length > 6) {
-    chat.removeChild(chat.children[0]);
-  }
-}
-
-// 🧠 AQUI FICAM OS COMANDOS
-function checkCommands(text) {
-  const parts = text.split(" ");
-  const cmd = parts[0];
-  const link = parts[1];
-
-  if (!link) return;
-
-  if (cmd === "!gif" && link.endsWith(".gif")) {
-    showMedia(link);
-  }
-
-  if (
-    cmd === "!img" &&
-    (link.endsWith(".png") ||
-     link.endsWith(".jpg") ||
-     link.endsWith(".jpeg") ||
-     link.endsWith(".webp"))
-  ) {
-    showMedia(link);
-  }
-}
-
-function showMedia(link) {
-  gifArea.innerHTML = "";
-
+function showMedia(url) {
   const img = document.createElement("img");
-  img.src = link;
-  gifArea.appendChild(img);
+  img.src = url;
+
+  overlay.appendChild(img);
 
   setTimeout(() => {
-    gifArea.innerHTML = "";
-  }, 6000);
-    }
+    img.remove();
+  }, 5000);
+}
+
+function getTags(raw) {
+  const tags = raw.split(" ")[0];
+  return {
+    mod: tags.includes("mod=1"),
+    broadcaster: tags.includes("broadcaster/1")
+  };
+}
