@@ -1,5 +1,5 @@
-const API_KEY = "SUA_API_KEY_AQUI";
-const CHANNEL_ID = "SEU_CHANNEL_ID_AQUI";
+const API_KEY = "AIzaSyDoDTtN60hLIitjBW1YNxIQmuZW5YfflCg";
+const CHANNEL_ID = "UC4kUqHcYkRz6t8XHk0v1xVw";
 
 let currentVideoId = null;
 
@@ -32,7 +32,6 @@ async function loadChat() {
     return;
   }
 
-  // Evita recarregar toda hora
   if (videoId === currentVideoId) return;
 
   currentVideoId = videoId;
